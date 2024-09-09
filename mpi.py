@@ -12,8 +12,6 @@ def generateData(worker):
     if worker == 0:
         response = requests.get(call)
         data = response.json()
-        #print(data)
-        #comm.send(data, dest=1, tag=11)
     else:
         data = None
 
