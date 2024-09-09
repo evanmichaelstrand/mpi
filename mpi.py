@@ -29,7 +29,7 @@ def processData(data):
         comm.send(location, dest=4)
 
     if worker == 2:
-        temp = "The temperature at the current time of " + data['current']['last_updated'] + " is " + data['current']['temp_c'] + " celcius and " #+ data['current']['temp_f'], "fahrenheit."
+        temp = "The temperature at the current time of " + data['current']['last_updated'] + " is " + str(data['current']['temp_c']) + " celcius and " + str(data['current']['temp_f']), "fahrenheit."
         #print("The temperature at the current time of", data['current']['last_updated'], "is", data['current']['temp_c'], "celcius and", data['current']['temp_f'], "fahrenheit.")
         comm.send(temp, dest=4)
 
