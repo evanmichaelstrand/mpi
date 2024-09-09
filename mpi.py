@@ -5,7 +5,6 @@ comm = MPI.COMM_WORLD
 worker = comm.Get_rank()
 
 def generateData(worker):
-
     apikey = "a32e46f5b6e645aca53203026240809"
     location = "Boulder"
     call = "http://api.weatherapi.com/v1/current.json?key=" + apikey + "&q=" + location + "&aqi=no"
@@ -25,25 +24,24 @@ def generateData(worker):
 def processData(data):
     if worker == 1:
         location = "The location is " + data['location']['name'] + ", " + data['location']['region']
-        #print("The location is", data['location']['name'], ", ", data['location']['region'])
-        comm.send(location, dest=4)
+        temp = "The temperature at the current time of " + data['current']['last_updated'] + " is " + str(data['current']['temp_c']) + " celcius and " + str(data['current']['temp_f']) + " fahrenheit."
+        data = location, temp
+        comm.send(data, dest=3)
 
     if worker == 2:
-        temp = "The temperature at the current time of " + data['current']['last_updated'] + " is " + str(data['current']['temp_c']) + " celcius and " + str(data['current']['temp_f']), "fahrenheit."
-        #print("The temperature at the current time of", data['current']['last_updated'], "is", data['current']['temp_c'], "celcius and", data['current']['temp_f'], "fahrenheit.")
-        comm.send(temp, dest=4)
+        condition = "The condition is " + data['current']['condition']['text'] + " with winds of " + str(data['current']['wind_mph']) + " mph."
+        rain = "The current precipitation amount is " + str(data['current']['precip_in']) + " inches."
+        status = condition, rain
+        comm.send(status, dest=3)
 
     if worker == 3: 
-        condition = "The condition is " + data['current']['condition']['text'] + " with winds of " + str(data['current']['wind_mph']) + " mph."
-        comm.send(condition, dest=4)
-
-    if worker == 4:
-        location = comm.recv(source=1)
-        temp = comm.recv(source=2)
-        condition = comm.recv(source=3)
+        location, temp = comm.recv(source=1)
+        condition, rain = comm.recv(source=2)
         print(location)
         print(temp)
         print(condition)
+        print(rain)
+        
 
 data = generateData(worker)
 processData(data)
