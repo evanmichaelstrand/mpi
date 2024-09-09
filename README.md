@@ -1,0 +1,2 @@
+# mpi
+Simple MPI program
